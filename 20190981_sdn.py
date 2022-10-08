@@ -416,6 +416,7 @@ class Menu():
                     else:
                         print("No se ha encontrado ningún curso con ese código")
                         break
+                break
             elif(inp=="3"):
                 temp=inputDeseado("Desea (a)Agregar o (e)Elimnar a un alumno de un curso?\n",["a","e","z"])
                 if(temp=="z"):
