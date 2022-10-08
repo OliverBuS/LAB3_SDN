@@ -640,6 +640,9 @@ class Menu():
             print("Analizando datos y creando conexión")
             conexion=0
             try:
+                for i in conexiones:
+                    if(i.alumno.codigo == alumno.codigo and i.servidor.nombre==servidor.nombre and i.servicio.nombre == servicio.nombre):
+                        raise Exception("Ya existe la conexión indicada")
                 conexion= Conexion(alumno,servidor,servicio)
                 conexiones.append(conexion)
                 print("Conexión creada con éxito")
@@ -664,12 +667,19 @@ class Menu():
                 print("No existen conexiones creadas manualmente")
             else:
                 try:
-                    inp2= int(input("Indique el número de la conexión para eliminarla de la lista (0) para listar:\n"))-1
-                    if(inp2<0 or inp2>= len(conexiones)):
-                        raise Exception("Valor no valido")
-                    conexiones[inp2].delete_conn()
-                    print("Conexión borrada con éxito")
-                    del conexiones[inp2]
+                    while(True):
+                        inp2= int(input("Indique el número de la conexión para eliminarla de la lista (0) para listar:\n"))-1
+                        if(inp2==-1):
+                            print("===================Lista de conexiones creadas============================")
+                            for idx,i in enumerate(conexiones):
+                                print("Conexión "+str(idx+1)+" -> Alumno: "+i.alumno.nombre+", Servicio: "+i.servidor.nombre+"-"+i.servicio.nombre)
+                            continue
+                        if(inp2<0 or inp2>= len(conexiones)):
+                            raise Exception("No valido")
+                        conexiones[inp2].delete_conn()
+                        del conexiones[inp2]
+                        print("Conexión borrada con éxito")
+                        break
                 except Exception as e:
                     print(e)
 
