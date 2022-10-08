@@ -1,0 +1,45 @@
+# NO OLVIDE REEMPLAZAR LOS VALORES QUE ESTÁN ENTRE CORCHETES
+
+# Bloque de alumnos
+alumnos:
+ - nombre: John Smith
+   codigo: "20041321"
+   mac: fa:16:3e:9e:95:a3
+ - nombre: Luisa Marvel
+   codigo: "20080621"
+   mac: 00:44:11:3F:22:C3
+
+# Bloque de cursos:
+cursos:
+ - codigo: TEL354
+   estado: DICTANDO
+   nombre: Redes Definidas por Software
+   alumnos:
+    - "20041321"
+   servidores:
+    - nombre: Servidor 1
+      servicios_permitidos:
+       - ssh 
+ - codigo: TEL123
+   estado: INACTIVO
+   nombre: Telepathy and Telekinetics
+   alumnos:
+    - "20080621"
+    - "20041321"
+   servidores:
+    - nombre: Servidor 1
+      servicios_permitidos:
+       - web 
+ 
+# Bloque de servidores / servicios
+servidores:
+ - nombre: "Servidor 1"
+   ip: 10.0.0.3
+   servicios: 
+    - nombre: ssh
+      protocolo: TCP
+      puerto: 22
+    - nombre: web
+      protocolo: TCP
+      puerto: 80
+ 
