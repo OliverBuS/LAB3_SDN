@@ -64,13 +64,13 @@ def get_attachement_points(host):
     for i in resp:
         if((host in i["mac"] ) or (host in i["ipv4"] )):
             return i["attachmentPoint"][0]["switchDPID"],i["attachmentPoint"][0]["port"]
-    return "not found", "error"
+    raise Exception("No se ha podido encontrar el equipo "+host+" en la red")
+
 
 def get_route(dpid_src,prt_src,dpid_dest,prt_dest):
     global controller
     path = controller+"/wm/topology/route/"+dpid_src+"/"+prt_src+"/"+dpid_dest+"/"+prt_dest+"/json"
     resp = requests.get(path).json()
-    #resp = json.dumps(resp.json(),indent=4, sort_keys=True)
     ret={}
     x=0;
     for i in resp:
@@ -646,7 +646,7 @@ class Menu():
                 conexiones.append(conexion)
                 print("Conexión creada con éxito")
             except Exception as e:
-                print("No se ha podido establecer la conexión (Verifique que el controlador conoce la IP del servidor)")
+                print("No se ha podido establecer la conexión (Verifique que el controlador conoce la IP del servidor y las MACS son correctas)")
                 return
         elif(inp=="2"):
             print("==================Lista de conexiones creadas manualmente==================")
