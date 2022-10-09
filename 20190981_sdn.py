@@ -111,68 +111,66 @@ class Conexion:
         raise Exception("El alumno no se encuentra matriculado en un curso con los permisos para servicio")
     
     def stablish_conn(self):
-        try:
-            servermac= get_mac(self.servidor.ip)
-            src_dpid,src_port = get_attachement_points(self.conn["src"])
-            dst_dpid,dst_port= get_attachement_points(self.conn["dst"])
-            ###Error
-            route = get_route(src_dpid,str(src_port),dst_dpid,str(dst_port))
-            name= self.alumno.codigo+"-"+self.servidor.nombre+"-"+self.servicio.nombre
-            flows=[]
-            for i in range(len(route)//2):
-                index=i*2
-                tmp = {
-                    "name":name+"-"+str(index)+"alsr",
-                    "switch": route[index]["switch"],
-                    "in_port": route[index]["puerto"],
-                    "priority":"1000",
-                    "active":"true",
-                    "eth_src": self.alumno.mac,
-                    "set_ipv4_dst": self.servidor.ip,
-                    "eth_type": "0x0800",
-                    "actions": "output="+str(route[index+1]["puerto"]),
-                }
 
-                tmp2 = {
-                    "name":name+str(index)+"sral",
-                    "switch": route[index]["switch"],
-                    "in_port": route[index+1]["puerto"],
-                    "priority":"1000",
-                    "active":"true",
-                    "eth_src": servermac,
-                    "eth_dst": self.alumno.mac,
-                    "actions": "output="+str(route[index]["puerto"]),
-                }
+        servermac= get_mac(self.servidor.ip)
+        src_dpid,src_port = get_attachement_points(self.conn["src"])
+        dst_dpid,dst_port= get_attachement_points(self.conn["dst"])
+        route = get_route(src_dpid,str(src_port),dst_dpid,str(dst_port))
+        name= self.alumno.codigo+"-"+self.servidor.nombre+"-"+self.servicio.nombre
+        flows=[]
+        for i in range(len(route)//2):
+            index=i*2
+            tmp = {
+                "name":name+"-"+str(index)+"alsr",
+                "switch": route[index]["switch"],
+                "in_port": route[index]["puerto"],
+                "priority":"1000",
+                "active":"true",
+                "eth_src": self.alumno.mac,
+                "set_ipv4_dst": self.servidor.ip,
+                "eth_type": "0x0800",
+                "actions": "output="+str(route[index+1]["puerto"]),
+            }
 
-                arp1= {
-                    "name":name+"-"+str(index)+"arpalsr",
-                    "switch": route[index]["switch"],
-                    "in_port": route[index]["puerto"],
-                    "priority":"1000",
-                    "active":"true",
-                    "eth_src": self.alumno.mac,
-                    "arp_tpa": self.servidor.ip,
-                    "eth_type": "0x0806",
-                    "actions": "output="+str(route[index+1]["puerto"]),
-                }
+            tmp2 = {
+                "name":name+str(index)+"sral",
+                "switch": route[index]["switch"],
+                "in_port": route[index+1]["puerto"],
+                "priority":"1000",
+                "active":"true",
+                "eth_src": servermac,
+                "eth_dst": self.alumno.mac,
+                "actions": "output="+str(route[index]["puerto"]),
+            }
+
+            arp1= {
+                "name":name+"-"+str(index)+"arpalsr",
+                "switch": route[index]["switch"],
+                "in_port": route[index]["puerto"],
+                "priority":"1000",
+                "active":"true",
+                "eth_src": self.alumno.mac,
+                "arp_tpa": self.servidor.ip,
+                "eth_type": "0x0806",
+                "actions": "output="+str(route[index+1]["puerto"]),
+            }
 
 
-                if(self.servicio.protocolo=="TCP"):
-                    tmp["tcp_dst"]=self.servicio.puerto
-                    tmp["ip_proto"]="0x06"
-                elif(self.servicio.protocolo=="UDP"):
-                    tmp["udp_dst"]=self.servicio.puerto
-                    tmp["ip_proto"]="0x11"
-                else:
-                    raise Exception("No se ha podido identificar el protocolo")
-                flows.append(tmp)
-                flows.append(tmp2)
-                flows.append(arp1)
-            self.flows = flows
-            for i in flows:
-                push_flow(i)
-        except Exception as e:
-            print(e)
+            if(self.servicio.protocolo=="TCP"):
+                tmp["tcp_dst"]=self.servicio.puerto
+                tmp["ip_proto"]="0x06"
+            elif(self.servicio.protocolo=="UDP"):
+                tmp["udp_dst"]=self.servicio.puerto
+                tmp["ip_proto"]="0x11"
+            else:
+                raise Exception("No se ha podido identificar el protocolo")
+            flows.append(tmp)
+            flows.append(tmp2)
+            flows.append(arp1)
+        self.flows = flows
+        for i in flows:
+            push_flow(i)
+
     def delete_conn(self):
         try:
             for i in self.flows:
@@ -294,7 +292,7 @@ class Menu():
         alumnos=[]
         servidores=[]
         cursos=[]
-        exist_data=False;
+        exist_Data=False;
         direccion=input("Ingrese la dirección del archivo: ")
         if(direccion=="z"):
             return
@@ -648,7 +646,7 @@ class Menu():
                 conexiones.append(conexion)
                 print("Conexión creada con éxito")
             except Exception as e:
-                print(e)
+                print("No se ha podido establecer la conexión (Verifique que el controlador conoce la IP del servidor)")
                 return
         elif(inp=="2"):
             print("==================Lista de conexiones creadas manualmente==================")
